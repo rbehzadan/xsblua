@@ -90,7 +90,7 @@ xsb:query("(order, (drink, coke), (food, hotdog)) = (order, X, (food, Y)).")
 --> { "','(drink,coke)|hotdog", }
 ```
 
-###### **Note:** *All methods expect correct `XSB Prolog` statements. Feeding erroneous statements to the program, may cause unpredictable behaviour.*
+###### **Note:** *All methods expect correct `XSB Prolog` statements. Feeding erroneous statements to the program may cause unpredictable behaviour.*
 
 ## 3. TODO
 - Write tests.
