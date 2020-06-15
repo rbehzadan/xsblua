@@ -92,12 +92,17 @@ xsb:query("(order, (drink, coke), (food, hotdog)) = (order, X, (food, Y)).")
 
 ###### **Note:** *All methods expect correct `XSB Prolog` statements. Feeding erroneous statements to the program may cause unpredictable behaviour.*
 
-## 3. TODO
-- Write tests.
+## 3. Change log
+#### [0.1.0] - 2020-06-15
 - Add `consult` and `assert` methods.
 - Add `unify` method. Use `unify_with_occurs_check/2`.
 - Add optional second argument for `query` method to denote maximum desired number of results.
+- Start versioning
 - Update methods `command` and `query` to automatically append `.` (dot) to their arguments when it is missed.
+
+## 4. TODO
+- Write tests.
+- Update documentation.
 - Update method `query` to parse the results and assign each value to its query variable.
     * e.g:
         ```lua
