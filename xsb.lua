@@ -7,10 +7,17 @@ XSB.__index = XSB
 local MSG = {
     NOT_INITIALIZED = "xsb engine not initialized",
     ALREADY_INITIALIZED = "xsb engine already initialized",
+    REPR_INITIALIZED = "<binding version %s, xsb-%s initialized at '%s'>",
+    REPR_NOT_INITIALIZED = "<binding version %s, xsb engine not initialized>",
 }
 
 local function realpath(p)
     return io.popen("realpath " .. p):read("*l")
+end
+
+local function getXSBVersion()
+    local r = xsblib.query("xsb_configuration(version,X).", 1)
+    return r[1]
 end
 
 function XSB:unify(term1, term2, max)
@@ -61,14 +68,30 @@ function XSB:close()
     self.isInitialized = false
 end
 
+function XSB:__tostring()
+    local str
+    if self.isInitialized then
+        str = MSG.REPR_INITIALIZED:format(self.lib_version,
+                                          self.xsb_version,
+                                          self.xsb_path)
+    else
+        str = MSG.REPR_NOT_INITIALIZED:format(self.lib_version)
+    end
+    return str
+end
+
 function XSB:init(xsbPath)
     assert(not self.isInitialized, MSG.ALREADY_INITIALIZED)
     self.isInitialized = false
     local xsbPath = xsbPath or XSB_HOME
     if xsbPath then
-        local rc = xsblib.init(realpath(xsbPath))
+        xsbPath = realpath(xsbPath)
+        local rc = xsblib.init(xsbPath)
         if rc == 0 then
             self.isInitialized = true
+            self.xsb_path = xsbPath
+            self.lib_version = xsblib.version()
+            self.xsb_version = getXSBVersion()
             self:command(":- auto_table.")
         end
     end
