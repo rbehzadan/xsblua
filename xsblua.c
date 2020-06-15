@@ -38,13 +38,14 @@ static int
 queryXSB(lua_State* L)
 {
     const char* q = luaL_checkstring(L, 1);
+    int max_answers = luaL_checkinteger(L, 2);
     int rc;
     XSB_StrDefine(return_string);
 
     rc = xsb_query_string_string((char*) q, &return_string, "|");
     int n = 0;
     lua_newtable(L);
-    while (rc == XSB_SUCCESS) {
+    while (rc == XSB_SUCCESS && n < max_answers) {
         lua_pushinteger(L, ++n);
         lua_pushstring(L, return_string.string);
         lua_settable(L, -3);

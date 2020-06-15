@@ -13,10 +13,11 @@ local function realpath(p)
     return io.popen("realpath " .. p):read("*l")
 end
 
-function XSB:unify(term1, term2)
+function XSB:unify(term1, term2, max)
     assert(self.isInitialized, MSG.NOT_INITIALIZED)
+    local max = max or 10
     local q = string.format("unify_with_occurs_check(%s, %s).", term1, term2)
-    local r = xsblib.query(q)
+    local r = xsblib.query(q, max)
     return r
 end
 
@@ -47,10 +48,11 @@ function XSB:command(cmd)
     return rc
 end
 
-function XSB:query(query)
+function XSB:query(query, max)
     assert(self.isInitialized, MSG.NOT_INITIALIZED)
+    local max = max or 10
     if query:sub(-1) ~= '.' then query = query .. '.' end
-    return xsblib.query(query)
+    return xsblib.query(query, max)
 end
 
 function XSB:close()
