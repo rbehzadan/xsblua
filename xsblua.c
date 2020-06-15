@@ -7,13 +7,15 @@
 
 #include "cinterf.h"
 
+
 #if LUA_VERSION_NUM >= 502
 #define new_lib(L, l) (luaL_newlib(L, l))
 #else
 #define new_lib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
-#define XSB_INIT_ARGS  " --quietload --nofeedback --nobanner --noprompt"
+#define VERSION         "0.1.0"
+#define XSB_INIT_ARGS   " --quietload --nofeedback --nobanner --noprompt"
 
 static int
 initXSB(lua_State* L)
@@ -82,11 +84,20 @@ closeXSB(lua_State* L)
     return 0;
 }
 
+static int
+getVersion(lua_State* L)
+{
+    lua_pushstring(L, VERSION);
+
+    return 1;
+}
+
 static const struct luaL_Reg xsblua [] = {
     {"init", initXSB},
     {"query", queryXSB},
     {"command", commandXSB},
     {"close", closeXSB},
+    {"version", getVersion},
     {NULL, NULL}
 };
 
