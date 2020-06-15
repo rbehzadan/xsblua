@@ -9,31 +9,50 @@ local function realpath(p)
     return io.popen("realpath " .. p):read("*l")
 end
 
+function XSB:unify(term1, term2)
+    assert(self.isInitialized, "e: xsb engine not initialized")
+    local q = string.format("unify_with_occurs_check(%s, %s).", term1, term2)
+    local r = xsblib.query(q)
+    return r
+end
+
+function XSB:consult(fn)
+    assert(self.isInitialized, "e: xsb engine not initialized")
+    local cmd = string.format("consult('%s').", fn)
+    local rc = xsblib.command(cmd)
+    return rc
+end
+
 function XSB:assert(term)
+    assert(self.isInitialized, "e: xsb engine not initialized")
+    if term:sub(-1) == '.' then
+        term = term:sub(1, -2)
+    end
     if term:find(":-") then
         term = "(" .. term .. ")"
     end
     local cmd = "assert(" .. term .. ")."
-    return self:command(cmd)
+    local rc = xsblib.command(cmd)
+    return rc
 end
 
 function XSB:command(cmd)
     assert(self.isInitialized, "e: xsb engine not initialized")
+    if cmd:sub(-1) ~= '.' then cmd = cmd .. '.' end
     local rc = xsblib.command(cmd)
     return rc
 end
 
 function XSB:query(query)
     assert(self.isInitialized, "e: xsb engine not initialized")
+    if query:sub(-1) ~= '.' then query = query .. '.' end
     return xsblib.query(query)
 end
 
 function XSB:close()
     assert(self.isInitialized, "e: xsb engine not initialized")
-    local rc = xsblib.close()
-    -- it seems it's useless to check the rc
+    xsblib.close()
     self.isInitialized = false
-    return rc
 end
 
 function XSB:init(xsbPath)
